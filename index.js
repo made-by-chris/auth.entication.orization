@@ -6,12 +6,16 @@ import fs from 'fs';
 import path from 'path';
 import session from 'express-session';
 import MongoStore from 'connect-mongo'
+import isAuthorized from './middlewares/isLoggedIn.js';
+import isAdmin from './middlewares/isAdmin.js';
+import isLoggedIn from './middlewares/isLoggedIn.js';
 
 import {
     userRoutes, 
 } from './routes/index.js';
 import connectToDatabase from './models/index.js';
 dotenv.config();
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -23,8 +27,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { secure: false },
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI})
-
-  }))
+}))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -48,15 +51,35 @@ app.use(cors({
 
 app.use((err, req, res, next) => {
     accessLogStream.write(` ${req.method} ${req.path} ${err.message} \n`)
-    res.status(500).send('Something broke!') 
+    res.status(500).render('message', {
+        title: "Something broke!",
+        message:"Sorry about that. Maybe try again?",
+        link:"/",
+    });
 })
 
 app.use("/users", userRoutes)
-app.use("/confirm", (req, res) => {
-    res.render('confirm', {
-        title: "You're almost ready",
-        message:"please check your email and click the confirmation link"
+app.use("/confirmed", (req, res) => {
+    // TOdO: modify user document to set confirmed to true
+    res.render('message', {
+        title: "Thanks for confirming your contact details!",
+        message:"you can now login",
+        link:"/",
     });
+})
+app.use("/logged-in-page", isLoggedIn, (req, res) => {
+    res.render('logged-in-page.ejs', {
+        title: 'protected page - this page is only visible to people that are logged in!',
+        user: req.session.user,
+        sessionID: req.sessionID
+    })
+})
+app.use("/admin-page", isAdmin, (req, res) => {
+    res.render('admin-page.ejs', {
+        title: 'admin page - this page is only visible to people that are admin!',
+        user: req.session.user,
+        sessionID: req.sessionID
+    })
 })
 app.use("/", (req, res) => {
     res.render('index.ejs', {
@@ -66,14 +89,15 @@ app.use("/", (req, res) => {
     })
 })
 
+
 // app.use("/api", api)
 
 connectToDatabase().then((error) => {
     if (error) {
-        console.log(error,"!!!!")
+        console.log(error)
         return process.exit(1)
     }
-    app.listen(8080, () => {
-        console.log('Server is running on port 8080')
+    app.listen(PORT, () => {
+        console.log(`Server is running on port http://localhost:${PORT}`)
     })
 })

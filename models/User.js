@@ -37,7 +37,6 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.pre('save', function(next) {
-    console.log("pre save");
     var user = this;
 
     // only hash the password if it has been modified (or is new)
@@ -58,10 +57,7 @@ UserSchema.pre('save', function(next) {
 });
      
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
-    });
+    return bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = mongoose.model("User", UserSchema);

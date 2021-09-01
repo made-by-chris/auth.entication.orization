@@ -22,6 +22,7 @@
             <% } else { %>
                 <h3>you're not logged in</h3>
             <% } %>
+            <hr>
                 
                 <form action="users/register" method="post">
                     <h3>register</h3>
@@ -31,16 +32,20 @@
                     <input type="checkbox" name="wantsSpam" placeholder="would you like spam emails?"> would you like spam emails?<br>
                     <input type="submit" value="submit" class="btn btn-primary">
                 </form>
+                <hr>
                 <form action="users/login" method="post">
                     <h3>login</h3>
                     <input type="text" name="email" placeholder="email"><br>
                     <input type="password" name="password" placeholder="password"><br>
                     <input type="submit" value="submit" class="btn btn-primary">
                 </form>
+                <hr>
                 <form action="users/logout" method="get">
                     <h3>logout</h3>
                     <input type="submit" value="submit" class="btn btn-primary">
                 </form>
+                <a href="/logged-in-page">logged-in-page</a>
+                <a href="/admin-page">admin-page</a>
             </div>
         </div>
     </body>
