@@ -10,8 +10,10 @@ export default function isAdmin(req, res, next) {
             });
         }
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error'
+        res.status(500).render("message", {
+            title: "Oops.",
+            message:"There was an error, sorry!",
+            link:"/",
         });
     }
 }

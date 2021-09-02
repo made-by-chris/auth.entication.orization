@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import session from 'express-session';
 import MongoStore from 'connect-mongo'
-import isAuthorized from './middlewares/isLoggedIn.js';
 import isAdmin from './middlewares/isAdmin.js';
 import isLoggedIn from './middlewares/isLoggedIn.js';
 
@@ -14,6 +13,7 @@ import {
     userRoutes, 
 } from './routes/index.js';
 import connectToDatabase from './models/index.js';
+
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 

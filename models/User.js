@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema(
         password: {index: true, required:true, type:String},
         email: {index: true, required:true, type:String, unique: true},
         phone: {
-            required:false,
+            required: false,
             type:String, 
             validate: {
                 validator: async function(phone) {
@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema(
                 },
                 message: props => 'The specified phone number is already associated with an account.'
             }
-        }, // sparse means that if phone is null, it will not be indexed, which works for us because the phone values have to be unique, which means the 2nd null phone number would create a validation error. 
+        },
         primaryContact: {index: true, required:true, type:String, enum : ['phone', 'email'], default: 'email'},
         phoneConfirmed: {index: true, required:true, type:Boolean, default: false},
         emailConfirmed: {index: true, required:true, type:Boolean, default: false},
