@@ -3,11 +3,7 @@ export default function(req, res, next) {
         if (req.session.user) {
             next();
         } else {
-            res.status(401).render("message", {
-                title: "Oops.",
-                message:"Only logged in users can see this page",
-                link:"/",
-            });
+            res.status(401).send({message:"Only logged in users can see this page"})
         }
     } catch (error) {
         res.status(500).json({

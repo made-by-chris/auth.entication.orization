@@ -3,17 +3,9 @@ export default function isAdmin(req, res, next) {
         if (req.session.user.role === 'admin') {
             next();
         } else {
-            res.status(401).render("message", {
-                title: "Oops.",
-                message:"Only admins can see this page",
-                link:"/",
-            });
+            res.status(401).send({message:"Only admins can see this page"})
         }
     } catch (error) {
-        res.status(500).render("message", {
-            title: "Oops.",
-            message:"There was an error, sorry!",
-            link:"/",
-        });
+        res.status(500).send({message:"There was an error, sorry!"})
     }
 }

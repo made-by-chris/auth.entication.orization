@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import { registrationValidator, loginValidator } from '../helpers/validation.js'
 
 export async function register(req, res) {
+ 
     try {
         const { error } = registrationValidator(req.body);
         if (error) {
@@ -11,7 +12,7 @@ export async function register(req, res) {
         req.session.user = user
         res.send(user)
     } catch (error) {
-        res.send(500)
+        res.send(500 , error.message)
     }
 }
 export async function login(req, res) {
@@ -38,23 +39,11 @@ export async function logout(req, res) {
     try {
         req.session.destroy(err => {
             if (err) {
-                return res.status(500).render('message', {
-                    title: "Something broke!",
-                    message:"Sorry about that. Maybe try again?",
-                    link:"/",
-                });
+                return res.status(500).send({message:"Sorry about that. Maybe try again?"})
             }
-            res.render('message', {
-                title: "You've been logged out",
-                message:"bye.",
-                link:"/",
-            });
+            res.send({message: "You've been logged out"})
         });
     } catch (error) {
-        res.status(500).render('message', {
-            title: "Something broke!",
-            message:"Sorry about that. Maybe try again?",
-            link:"/",
-        });
+        res.status(500).send({message:"Sorry about that. Maybe try again?"})
     }
 }

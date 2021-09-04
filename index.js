@@ -47,55 +47,10 @@ app.use(cors())
 
 app.use((err, req, res, next) => {
     accessLogStream.write(` ${req.method} ${req.path} ${err.message} \n`)
-    res.status(500).render('message', {
-        title: "Something broke!",
-        message:"Sorry about that. Maybe try again?",
-        link:"/",
-    });
+    res.status(500).send({message:"Sorry about that. Maybe try again?"});
 })
 
 app.use("/users", userRoutes)
-app.use("/confirmed", (req, res) => {
-    // TODO: modify user document to set confirmed to true
-    res.render('message', {
-        title: "Thanks for confirming your contact details!",
-        message:"you can now login",
-        link:"/",
-    });
-})
-app.use("/confirmed-primary-contact-page", hasConfirmedPrimaryContact, (req, res) => {
-    res.render('message', {
-        title: 'confirmed gang - yeh we confirmed our emails so what loser',
-        message: "hey",
-        link: "/",
-        user: req.session.user,
-        sessionID: req.sessionID
-    })
-})
-app.use("/logged-in-page", isLoggedIn, (req, res) => {
-    res.render('logged-in-page.ejs', {
-        title: 'protected page - this page is only visible to people that are logged in!',
-        user: req.session.user,
-        sessionID: req.sessionID
-    })
-})
-app.use("/admin-page", isAdmin, (req, res) => {
-    res.render('admin-page.ejs', {
-        title: 'admin page - this page is only visible to people that are admin!',
-        user: req.session.user,
-        sessionID: req.sessionID
-    })
-})
-// app.use("/", (req, res) => {
-//     res.render('index.ejs', {
-//         title: 'auth test page',
-//         user: req.session.user,
-//         sessionID: req.sessionID
-//     })
-// })
-
-
-// app.use("/api", api)
 
 connectToDatabase().then((error) => {
     if (error) {

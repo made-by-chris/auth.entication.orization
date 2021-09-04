@@ -5,17 +5,9 @@ export default function(req, res, next) {
         if (value) {
             next();
         } else {
-            res.status(401).render("message", {
-                title: "Oops.",
-                message:`Please confirm your ${primary} to continue.`,
-                link:"/",
-            });
+            res.status(401).send({message:`Please confirm your ${primary} to continue.`})
         }
     } catch (error) {
-        res.status(500).render("message", {
-            title: "Oops.",
-            message:"There was an error, sorry!",
-            link:"/",
-        });
+        res.status(500).send({message:"There was an error, sorry!"})
     }
 }
