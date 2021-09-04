@@ -23,7 +23,9 @@ app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false },
+    cookie: { secure: false, path: '/' },
+    // cookie: {httpOnly: false},
+    key: 'cookie.sid',
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI})
 }))
 
@@ -40,7 +42,10 @@ const accessLogStream = fs.createWriteStream(path.join(process.cwd(), 'access.lo
 app.use(morgan('combined'))
 app.use(morgan('combined', { stream: accessLogStream }))
 
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+}))
 
 app.use((err, req, res, next) => {
     accessLogStream.write(` ${req.method} ${req.path} ${err.message} \n`)

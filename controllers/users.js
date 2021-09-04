@@ -44,9 +44,13 @@ export async function logout(req, res) {
             if (err) {
                 return res.status(500).json({message:"Sorry about that. Maybe try again?"})
             }
-            res.json({message: "You've been logged out"})
+            res.clearCookie('cookie.sid', { path: '/' }).json({message: "You've been logged out"})
         });
     } catch (error) {
         res.status(500).json({message:"Sorry about that. Maybe try again?"})
     }
+}
+
+export async function me(req, res) {
+    res.send(req.sessionID);
 }
