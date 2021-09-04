@@ -2,7 +2,6 @@ import User from '../models/User.js';
 import { registrationValidator, loginValidator } from '../helpers/validation.js'
 
 export async function register(req, res) {
- 
     try {
         const { error } = registrationValidator(req.body);
         if (error) {
@@ -12,7 +11,11 @@ export async function register(req, res) {
         req.session.user = user
         res.send(user)
     } catch (error) {
-        res.send(500 , error.message)
+        if ( error.code === 11000 ) {
+            res.send(400 , "Registration failed - check credentials. Maybe you already have an account?")
+        } else {
+            res.send(500 , error)
+        }
     }
 }
 export async function login(req, res) {
