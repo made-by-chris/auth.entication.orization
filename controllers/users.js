@@ -26,11 +26,11 @@ export async function login(req, res) {
         }
         const user = await User.findOne({email: req.body.email});
         if (!user) {
-            return res.status(400).json({error: 'There was an error logging in. Please check your credentials.'});
+            return res.status(400).json({message: 'There was an error logging in. Please check your credentials.'});
         }
         const isMatch = await user.comparePassword(req.body.password);
         if (!isMatch) {
-            return res.status(400).json({error: 'There was an error logging in. Please check your credentials.'});
+            return res.status(400).json({message: 'There was an error logging in. Please check your credentials.'});
         }
         req.session.user = user
         res.json({message: 'User logged in successfully', data: user});
