@@ -8,6 +8,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo'
 import isAdmin from './middlewares/isAdmin.js';
 import isLoggedIn from './middlewares/isLoggedIn.js';
+import hasConfirmedPrimaryContact from './middlewares/hasConfirmedPrimaryContact.js';
 
 import {
     userRoutes, 
@@ -15,7 +16,7 @@ import {
 import connectToDatabase from './models/index.js';
 
 dotenv.config();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -42,12 +43,7 @@ const accessLogStream = fs.createWriteStream(path.join(process.cwd(), 'access.lo
 app.use(morgan('combined'))
 app.use(morgan('combined', { stream: accessLogStream }))
 
-app.use(cors({
-    origin: "http://localhost:3000" // or your netlify domain
-}))
-
-
-// app.use(express.static('public'))
+app.use(cors())
 
 app.use((err, req, res, next) => {
     accessLogStream.write(` ${req.method} ${req.path} ${err.message} \n`)
@@ -60,12 +56,21 @@ app.use((err, req, res, next) => {
 
 app.use("/users", userRoutes)
 app.use("/confirmed", (req, res) => {
-    // TOdO: modify user document to set confirmed to true
+    // TODO: modify user document to set confirmed to true
     res.render('message', {
         title: "Thanks for confirming your contact details!",
         message:"you can now login",
         link:"/",
     });
+})
+app.use("/confirmed-primary-contact-page", hasConfirmedPrimaryContact, (req, res) => {
+    res.render('message', {
+        title: 'confirmed gang - yeh we confirmed our emails so what loser',
+        message: "hey",
+        link: "/",
+        user: req.session.user,
+        sessionID: req.sessionID
+    })
 })
 app.use("/logged-in-page", isLoggedIn, (req, res) => {
     res.render('logged-in-page.ejs', {
@@ -81,13 +86,13 @@ app.use("/admin-page", isAdmin, (req, res) => {
         sessionID: req.sessionID
     })
 })
-app.use("/", (req, res) => {
-    res.render('index.ejs', {
-        title: 'auth test page',
-        user: req.session.user,
-        sessionID: req.sessionID
-    })
-})
+// app.use("/", (req, res) => {
+//     res.render('index.ejs', {
+//         title: 'auth test page',
+//         user: req.session.user,
+//         sessionID: req.sessionID
+//     })
+// })
 
 
 // app.use("/api", api)

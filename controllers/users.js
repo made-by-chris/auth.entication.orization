@@ -5,53 +5,33 @@ export async function register(req, res) {
     try {
         const { error } = registrationValidator(req.body);
         if (error) {
-            return res.status(400).render('message', {
-                title: "We had an error registering you.",
-                message: error.details[0].message,
-                link:"/",
-            });
+            return res.send(400)
         }
         const user = await User.create(req.body);
         req.session.user = user
-        res.render('message', {
-            title: "You're almost ready",
-            message:"please check your email and click the confirmation link",
-            link:"/",
-        });
+        res.send(user)
     } catch (error) {
-        res.status(500).render('message', {
-            title: "Something broke!",
-            message: `A user with this ${Object.keys(error.keyPattern)[0]} already exists`,
-            link:"/",
-        });
+        res.send(500)
     }
 }
 export async function login(req, res) {
     try {
-        const { error } = loginValidator(req.body);
+        const { error } = loginValidator(req.body); 
         if (error) {
             return res.status(400).json({error});
         }
         const user = await User.findOne({email: req.body.email});
         if (!user) {
-            return res.status(400).json({error: 'User not found'});
+            return res.status(400).json({error: 'There was an error logging in. Please check your credentials.'});
         }
         const isMatch = await user.comparePassword(req.body.password);
         if (!isMatch) {
-            return res.status(400).json({error: 'Password is incorrect'});
+            return res.status(400).json({error: 'There was an error logging in. Please check your credentials.'});
         }
         req.session.user = user
-        res.render('message', {
-            title: "You logged in!",
-            message:"hi.",
-            link:"/",
-        });
+        res.json(user);
     } catch (error) {
-        res.status(500).render('message', {
-            title: "Something broke!",
-            message:"Sorry about that. Maybe try again?",
-            link:"/",
-        });
+        res.status(500).end();
     }
 }
 export async function logout(req, res) {
