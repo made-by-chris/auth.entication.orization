@@ -5,9 +5,9 @@ export default function(req, res, next) {
         if (value) {
             next();
         } else {
-            res.status(401).send({message:`Please confirm your ${primary} to continue.`})
+            res.status(401).json({message:`Please confirm your ${primary} to continue.`})
         }
     } catch (error) {
-        res.status(500).send({message:"There was an error, sorry!"})
+        res.status(500).json({message:"There was an error, sorry!"})
     }
 }

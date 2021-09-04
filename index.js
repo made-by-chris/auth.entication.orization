@@ -6,9 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import session from 'express-session';
 import MongoStore from 'connect-mongo'
-import isAdmin from './middlewares/isAdmin.js';
-import isLoggedIn from './middlewares/isLoggedIn.js';
-import hasConfirmedPrimaryContact from './middlewares/hasConfirmedPrimaryContact.js';
 
 import {
     userRoutes, 
@@ -47,7 +44,7 @@ app.use(cors())
 
 app.use((err, req, res, next) => {
     accessLogStream.write(` ${req.method} ${req.path} ${err.message} \n`)
-    res.status(500).send({message:"Sorry about that. Maybe try again?"});
+    res.status(500).json({message:"Sorry about that. Maybe try again?"});
 })
 
 app.use("/users", userRoutes)
