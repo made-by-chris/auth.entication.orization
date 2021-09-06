@@ -1,5 +1,7 @@
 import User from '../models/User.js';
+import VerificationCode from '../models/VerificationCode.js';
 import { registrationValidator, loginValidator } from '../helpers/validation.js'
+import sendVerificationEmail from '../helpers/sendVerificationEmail.js';
 
 export async function register(req, res) {
     try {
@@ -8,6 +10,7 @@ export async function register(req, res) {
             return res.status(400).json({message:error.details[0].message});
         }
         const user = await User.create(req.body);
+        sendVerificationEmail(user);
         req.session.user = user
         res.json({message: 'User created successfully', data: user});
     } catch (error) {
@@ -50,7 +53,18 @@ export async function logout(req, res) {
         res.status(500).json({message:"Sorry about that. Maybe try again?"})
     }
 }
-// users/me
+
+export async function verify(req, res) {
+    try {
+        const vcode = await VerificationCode.findOneAndUpdate({code: req.query.verification_code}, {valid: false})
+        const user = await User.findByIdAndUpdate(vcode.user_id, {emailConfirmed: true})
+        res.redirect("http://localhost:3000/?account_verified=1")
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"failed to verify account", data: error})
+    }
+}
+
 export async function me(req, res) {
     if(req.session.user){
         res.json({message:"You are logged in. Welcome back.", data: req.session.user});

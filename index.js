@@ -18,7 +18,6 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 app.set('view engine', 'ejs');
 
-
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
@@ -37,7 +36,6 @@ app.use((req, res, next) => {
     next();
 })
 
-
 const accessLogStream = fs.createWriteStream(path.join(process.cwd(), 'access.log'), { flags: 'a' })
 app.use(morgan('combined'))
 app.use(morgan('combined', { stream: accessLogStream }))
@@ -46,7 +44,6 @@ app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000'
 }))
-
 
 app.use("/users", userRoutes)
 app.use("*", (req, res) => {
