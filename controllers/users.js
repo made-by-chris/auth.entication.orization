@@ -50,7 +50,11 @@ export async function logout(req, res) {
         res.status(500).json({message:"Sorry about that. Maybe try again?"})
     }
 }
-
+// users/me
 export async function me(req, res) {
-    res.send(req.sessionID);
+    if(req.session.user){
+        res.json({message:"You are logged in. Welcome back.", data: req.session.user});
+    } else {
+        res.json({message:"You are not logged in."});
+    }
 }
