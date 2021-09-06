@@ -47,12 +47,16 @@ app.use(cors({
     origin: 'http://localhost:3000'
 }))
 
+
+app.use("/users", userRoutes)
+app.use("*", (req, res) => {
+    res.status(404).json({message:"this page does not exist"});
+})
+
 app.use((err, req, res, next) => {
     accessLogStream.write(` ${req.method} ${req.path} ${err.message} \n`)
     res.status(500).json({message:"Sorry about that. Maybe try again?"});
 })
-
-app.use("/users", userRoutes)
 
 connectToDatabase().then((error) => {
     if (error) {
